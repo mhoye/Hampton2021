@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<style type="text/css">
+			body {
+				padding: 1em;
+			}
+			input {
+				margin-left: 1em;
+			}
+		</style>
+	</head>
+	<body>
+		<form>
+			<label for="session">
+				Focus Time (hrs): 
+			</label>
+			<!-- Set desired work session -->
+			<!-- The average workday is 8 hours so that seems reasonable -->
+			<input type="number" id="session" min="0" max="8" value="1">
+			
+			<label for="interval">
+				Work Interval (mins):
+			</label>
+			<!-- Pomodoro Technique recommends 25 min intervals -->
+			<input type="number" id="interval" min="20" max="30" value="25">
+			<input type="submit">
+		</form>
+		<!-- Script for the popup that appears when icon is clicked -->
+		<script src="/popup.js"></script>
+	</body>
+</html>

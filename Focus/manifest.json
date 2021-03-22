@@ -1,0 +1,26 @@
+{
+	"manifest_version": 2,
+	"name": "Focus",
+	"version": "1.0.0",
+
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["/content_script.js"]
+		}
+	],
+
+	"browser_action": {
+		"brpwser_style": true,
+		"default_icon": {
+			"48": "/icon.svg"
+		},
+		"default_title": "Focus",
+		"default_popup": "/popup.html"
+	},
+
+	"permissions": [
+		"storage"
+	]
+
+}
