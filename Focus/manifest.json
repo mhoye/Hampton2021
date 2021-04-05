@@ -11,7 +11,7 @@
 	],
 
 	"browser_action": {
-		"brpwser_style": true,
+		"browser_style": true,
 		"default_icon": {
 			"48": "/icon.svg"
 		},
