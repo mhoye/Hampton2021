@@ -11,9 +11,9 @@
 	],
 
 	"browser_action": {
-		"brpwser_style": true,
+		"browser_style": true,
 		"default_icon": {
-			"48": "/icon.svg"
+			"48": "icons/icon.png"
 		},
 		"default_title": "Focus",
 		"default_popup": "/popup.html"
