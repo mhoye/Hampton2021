@@ -1,8 +1,8 @@
 //listen for changes to value in storage and react on the page
 
-let style = document.createElement('style');
+//let style = document.createElement('style');
 
-document.body.appendChild(style);
+//document.body.appendChild(style);
 
 browser.storage.onChanged.addListener((changes, area) => {
 	if (area === 'local' && 'session_length' in changes) {
