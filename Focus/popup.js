@@ -22,6 +22,49 @@ async function setInterval(interval_length) {
 	await browser.storage.local.set({ interval_length })
 }
 
+function runSession() {
+	//set lengths
+	interval = browser.storage.local.get("interval_length");
+	session = browser.storage.local.get("session_length");
+	console.log(`Session: ${session}`);
+	console.log(`Interval: ${interval}`);
+	var x = setInterval(function() {
+		end_time = new Date().getTime()+(session*3600000);
+		current_time = new Date().getTime();
+		var time_left = end_time - current_time;
+		var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+		
+		document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
+		if(time_left < 0){
+			clearInterval();
+			document.getElementById("timer").innerHTML = "Your session has ended!";
+		}
+	},1000);
+
+	
+
+	/*var iterations = (session*60)/interval;
+	alert("Your session starts now!");
+	setTimeout(endSession, (session*3600000));
+	while(iterations > 0) {
+		setTimeout(breakTime, (interval*60000));
+		setTimeout(workTime, 300000);
+	}*/
+}
+
+function breakTime() {
+	alert("It is time for a break! Step away from your computer for 5 minutes...");
+}
+
+function workTime() {
+	alert("Time to get back to work!");
+}
+
+function endSession() {
+	alert("*Your Focus Session Has Ended*");
+}
 
 
  /*async function init(e) {
