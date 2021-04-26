@@ -6,9 +6,21 @@
 		<style type="text/css">
 			body {
 				padding: 1em;
+				font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+				font-size: medium;
 			}
 			input {
 				margin-left: 1em;
+			}
+			.timer{
+				font-weight: bold;
+				font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+				color: rgb(40, 155, 40);
+			}
+			.f-button{
+				padding: .25em 1em;
+				background-color: rgb(40, 155, 40);
+				color: white;
 			}
 		</style>
 	</head>
@@ -26,9 +38,9 @@
 			</label>
 			<!-- Pomodoro Technique recommends 25 min intervals -->
 			<input type="number" id="interval" min="20" max="30" value="25">
-			<input type="submit" value="Start Session" >
+			<input class="f-button" type="submit" value="Start Session" >
 		</form>
-		<p id="timer"></p>
+		<p id="timer" class="timer"></p>
 		<script src="content_script.js"></script>
 		<script>
 			document.getElementById('root').onload = function(){onOpen()};
