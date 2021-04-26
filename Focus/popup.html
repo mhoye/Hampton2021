@@ -12,8 +12,8 @@
 			}
 		</style>
 	</head>
-	<body>
-		<form id="home" >
+	<body id="root">
+		<form id="home">
 			<label for="session">
 				Focus Time (hrs): 
 			</label>
@@ -29,7 +29,71 @@
 			<input type="submit" value="Start Session" >
 		</form>
 		<p id="timer"></p>
-		<!-- Script for the popup that appears when icon is clicked -->
-		<script src="/popup.js"></script>
+		<script>
+			document.getElementById('root').onload = function(){onOpen()};
+			
+			function onOpen(){
+				console.log("Form Loaded...");
+				const form = document.getElementById('home');
+
+				form.addEventListener('submit', function(event){
+					event.preventDefault() //keep from submitting until we grab the info
+					let session = document.getElementById('session').value;
+					let interval = document.getElementById('interval').value;
+					setSession(session);
+					setInterval(interval);
+					console.log(`Session: ${session}`);
+					console.log(`Interval: ${interval}`);
+					runSession();
+				});
+			}
+
+			async function setSession(session_length) { 
+				browser.storage.local.set({session_length});
+			}
+
+			async function setInterval(interval_length) {
+				browser.storage.local.set({interval_length});
+			}
+
+			async function getSession() { 
+				let result = await browser.storage.local.get("session_length");
+				return result;
+			}
+
+			async function getInterval() {
+				let result = await browser.storage.local.get("interval_length");
+				return result;
+			}
+
+			function onGot(item) {
+				console.log(item);
+			}
+
+			function onError(error) {
+				console.log(`Error: ${error}`);
+			}
+
+			function runSession() {
+				let interval = getInterval();
+				let session = getSession();
+				console.log(`Session: ${session}`);
+				console.log(`Interval: ${interval}`);
+				var x = setInterval(function() {
+					end_time = new Date().getTime()+(session*3600000);
+					current_time = new Date().getTime();
+					var time_left = end_time - current_time;
+					var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+					var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
+					var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+					
+					document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
+					if(time_left < 0){
+						clearInterval();
+						document.getElementById("timer").innerHTML = "Your session has ended!";
+					}
+				},1000);
+			}
+		</script>
 	</body>
 </html>

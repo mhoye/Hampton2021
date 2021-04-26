@@ -1,31 +1,18 @@
 
-const form = document.getElementById('home');
 
-form.addEventListener('submit', function(event){
-	event.preventDefault() //keep from submitting until we grab the info
-	let session = document.getElementById('session').value;
-	let interval = document.getElementById('interval').value;
-	setSession(session);
-	setInterval(interval);
-	console.log(`Session: ${session}`);
-	console.log(`Interval: ${interval}`);
-	runSession();
-});
-
-async function setSession(session_length) {
-	await browser.storage.local.set({ session_length });
-	//.then(() => browser.storage.local.get({session_length:''}))
-    //.then(({session_length}) => alert(session_length));
+async function setSession(session_length) { 
+	browser.storage.local.set({session_length})
+	.then(console.log("Session Set!"),console.log("ERROR:Session not set..."));
 }
 
 async function setInterval(interval_length) {
-	await browser.storage.local.set({ interval_length })
+	browser.storage.local.set({interval_length})
+	.then(console.log("Interval Set!"),console.log("ERROR:Interval not set..."));
 }
 
 function runSession() {
-	//set lengths
-	interval = browser.storage.local.get("interval_length");
-	session = browser.storage.local.get("session_length");
+	let interval = browser.storage.local.get("interval_length");
+	let session = browser.storage.local.get("session_length");
 	console.log(`Session: ${session}`);
 	console.log(`Interval: ${interval}`);
 	var x = setInterval(function() {
@@ -42,6 +29,7 @@ function runSession() {
 			document.getElementById("timer").innerHTML = "Your session has ended!";
 		}
 	},1000);
+}
 
 	
 
