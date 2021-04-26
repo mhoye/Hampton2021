@@ -30,8 +30,6 @@
 		</form>
 		<p id="timer"></p>
 		<script>
-			let session;
-			let interval;
 			document.getElementById('root').onload = function(){onOpen()};
 			
 			function onOpen(){
@@ -43,7 +41,7 @@
 					let session = document.getElementById('session').value;
 					let interval = document.getElementById('interval').value;
 					setSession(session);
-					setInterval(interval);
+					setWorkInterval(interval);
 					console.log(`Session: ${session}`);
 					console.log(`Interval: ${interval}`);
 					runSession();
@@ -54,7 +52,7 @@
 				browser.storage.local.set({session_length});
 			}
 
-			async function setInterval(interval_length) {
+			async function setWorkInterval(interval_length) {
 				browser.storage.local.set({interval_length});
 			}
 
@@ -65,7 +63,7 @@
 				return session;
 			}
 
-			async function getInterval() {
+			async function getWorkInterval() {
 				let result = await browser.storage.local.get("interval_length");
 				interval = result.interval_length;
 				console.log(`Interval: ${interval}`);
@@ -77,29 +75,26 @@
 				getSession()
 				.then((session) => {
 					//then we use session to start overhead timer
-					let promise = new Promise( (resolve, reject) => {
 						console.log('Starting timer...');
 						let s=session;
 						console.log(`Session Length: ${session}`);
-						var x = setInterval(() => {
-							var end_time = new Date().getTime()+(s*3600000);
+						var end_time = new Date().getTime()+(s*3600000);
+						let x = setInterval(function(){
 							var current_time = new Date().getTime();
 							var time_left = end_time - current_time;
-							console.log(`Time Left: ${time_left}`);
 							var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 							var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
 							var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
 							
 							document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
-							if(time_left < 0){
-								clearInterval();
+							if(time_left <= 0){
+								clearInterval(x);
 								document.getElementById("timer").innerHTML = "Your session has ended!";
 								alert("Your session has ended!");
+								
 							}
 						},1000);
-					});
-					promise.then(() => console.log('resolved'));
-					
+						return x;
 				});
 			}
 		</script>
