@@ -29,6 +29,7 @@
 			<input type="submit" value="Start Session" >
 		</form>
 		<p id="timer"></p>
+		<script src="content_script.js"></script>
 		<script>
 			document.getElementById('root').onload = function(){onOpen()};
 			
@@ -75,27 +76,10 @@
 				getSession()
 				.then((session) => {
 					//then we use session to start overhead timer
-						console.log('Starting timer...');
-						let s=session;
-						console.log(`Session Length: ${session}`);
-						var end_time = new Date().getTime()+(s*3600000);
-						let x = setInterval(function(){
-							var current_time = new Date().getTime();
-							var time_left = end_time - current_time;
-							var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-							var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
-							var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
-							
-							document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
-							if(time_left <= 0){
-								clearInterval(x);
-								document.getElementById("timer").innerHTML = "Your session has ended!";
-								alert("Your session has ended!");
-								
-							}
-						},1000);
-						return x;
-				});
+					runTimer(session);
+				}).then(
+
+				);
 			}
 		</script>
 	</body>
