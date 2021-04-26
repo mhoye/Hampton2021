@@ -1,39 +1,32 @@
-//listen for changes to value in storage and react on the page
+//Doc Purpose: listen for the browser habits for end browsing report
+console.log("Focus Exstension Enabled");
+let currentTab = null;
+//listen for navigation from tab to tab
+browser.tabs.onActivated.addListener((event) => currentTab = event.tabId);
 
-//let style = document.createElement('style');
-
-//document.body.appendChild(style);
-
-browser.storage.onChanged.addListener((changes, area) => {
-	if (area === 'local' && 'session_length' in changes) {
-		update(changes.session_length.newValue, changes.interval_length);
+setInterval(updateBrowseTime, 1000);
+async function updateBrowseTime(){
+	if(!currentTab){
+		return;
 	}
-});
+	let frames = null;
+	try{
+		frames = await browser.webNavigation.getAllFrames({"tabId": currentTab});
+	} catch (error) {
+		console.log(error);
+	}
 
-function update(session_length, interval_length) {
-	//set timer for the session
-	runSession(session_length,interval_length);
-}
+	let frame = frames.filter((frame) => frame.parentFrameId == -1)[0];
 
-function runSession(session_length, interval_length) {
-	var iterations = (session_length*60)/interval_length;
-	setTimeout(endSession, (session_length*3600000));
-	while(iterations > 0) {
-		setTimeout(breakTime, (interval_length*60000));
-		setTimeout(workTime, 300000);
+	if (!frame.url.startsWith('http')) {
+		return;
+	}
+	let hostname = new URL(frame.url).hostname;
+	try {
+		let seconds = await browser.storage.local.get({[hostname]: 0});
+		browser.storage.local.set({[hostname]: seconds[hostname]+1});
+		console.log(hostname);
+	} catch (error) {
+		console.log(error);
 	}
 }
-
-function breakTime() {
-	alert("It is time for a break! Step away from your computer for 5 minutes...");
-}
-
-function workTime() {
-	alert("Time to get back to work!");
-}
-
-function endSession() {
-	alert("*Your Focus Session Has Ended*");
-}
-
-browser.storage.local.get('value').then(result => update(result.value));

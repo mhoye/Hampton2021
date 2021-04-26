@@ -12,8 +12,8 @@
 			}
 		</style>
 	</head>
-	<body>
-		<form id="home" >
+	<body id="root">
+		<form id="home">
 			<label for="session">
 				Focus Time (hrs): 
 			</label>
@@ -28,7 +28,75 @@
 			<input type="number" id="interval" min="20" max="30" value="25">
 			<input type="submit" value="Start Session" >
 		</form>
-		<!-- Script for the popup that appears when icon is clicked -->
-		<script src="/popup.js"></script>
+		<p id="timer"></p>
+		<script>
+			document.getElementById('root').onload = function(){onOpen()};
+			
+			function onOpen(){
+				console.log("Form Loaded...");
+				const form = document.getElementById('home');
+
+				form.addEventListener('submit', function(event){
+					event.preventDefault() //keep from submitting until we grab the info
+					let session = document.getElementById('session').value;
+					let interval = document.getElementById('interval').value;
+					setSession(session);
+					setWorkInterval(interval);
+					console.log(`Session: ${session}`);
+					console.log(`Interval: ${interval}`);
+					runSession();
+				});
+			}
+
+			async function setSession(session_length) { 
+				browser.storage.local.set({session_length});
+			}
+
+			async function setWorkInterval(interval_length) {
+				browser.storage.local.set({interval_length});
+			}
+
+			async function getSession() { 
+				let result = await browser.storage.local.get("session_length");
+				session = result.session_length;
+				console.log(`getSession: ${session}`);
+				return session;
+			}
+
+			async function getWorkInterval() {
+				let result = await browser.storage.local.get("interval_length");
+				interval = result.interval_length;
+				console.log(`Interval: ${interval}`);
+				return interval;
+			}
+
+			async function runSession() {
+				//first we get the session
+				getSession()
+				.then((session) => {
+					//then we use session to start overhead timer
+						console.log('Starting timer...');
+						let s=session;
+						console.log(`Session Length: ${session}`);
+						var end_time = new Date().getTime()+(s*3600000);
+						let x = setInterval(function(){
+							var current_time = new Date().getTime();
+							var time_left = end_time - current_time;
+							var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+							var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
+							var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+							
+							document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
+							if(time_left <= 0){
+								clearInterval(x);
+								document.getElementById("timer").innerHTML = "Your session has ended!";
+								alert("Your session has ended!");
+								
+							}
+						},1000);
+						return x;
+				});
+			}
+		</script>
 	</body>
 </html>

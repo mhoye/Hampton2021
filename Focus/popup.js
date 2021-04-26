@@ -1,27 +1,57 @@
 
-const form = document.getElementById('home');
 
-form.addEventListener('submit', function(event){
-	event.preventDefault() //keep from submitting until we grab the info
-	let session = document.getElementById('session').value;
-	let interval = document.getElementById('interval').value;
-	setSession(session);
-	setInterval(interval);
-	console.log(`Session: ${session}`);
-	console.log(`Interval: ${interval}`);
-	runSession();
-});
-
-async function setSession(session_length) {
-	await browser.storage.local.set({ session_length });
-	//.then(() => browser.storage.local.get({session_length:''}))
-    //.then(({session_length}) => alert(session_length));
+async function setSession(session_length) { 
+	browser.storage.local.set({session_length})
+	.then(console.log("Session Set!"),console.log("ERROR:Session not set..."));
 }
 
 async function setInterval(interval_length) {
-	await browser.storage.local.set({ interval_length })
+	browser.storage.local.set({interval_length})
+	.then(console.log("Interval Set!"),console.log("ERROR:Interval not set..."));
 }
 
+function runSession() {
+	let interval = browser.storage.local.get("interval_length");
+	let session = browser.storage.local.get("session_length");
+	console.log(`Session: ${session}`);
+	console.log(`Interval: ${interval}`);
+	var x = setInterval(function() {
+		end_time = new Date().getTime()+(session*3600000);
+		current_time = new Date().getTime();
+		var time_left = end_time - current_time;
+		var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+		
+		document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
+		if(time_left < 0){
+			clearInterval();
+			document.getElementById("timer").innerHTML = "Your session has ended!";
+		}
+	},1000);
+}
+
+	
+
+	/*var iterations = (session*60)/interval;
+	alert("Your session starts now!");
+	setTimeout(endSession, (session*3600000));
+	while(iterations > 0) {
+		setTimeout(breakTime, (interval*60000));
+		setTimeout(workTime, 300000);
+	}*/
+
+function breakTime() {
+	alert("It is time for a break! Step away from your computer for 5 minutes...");
+}
+
+function workTime() {
+	alert("Time to get back to work!");
+}
+
+function endSession() {
+	alert("*Your Focus Session Has Ended*");
+}
 
 
  /*async function init(e) {
