@@ -30,3 +30,40 @@ async function updateBrowseTime(){
 		console.log(error);
 	}
 }
+
+function runTimer(session){
+	console.log('Starting timer...');
+	let s=session;
+	console.log(`Session Length: ${session}`);
+	var end_time = new Date().getTime()+(s*3600000);
+	let x = setInterval(function(){
+		var current_time = new Date().getTime();
+		var time_left = end_time - current_time;
+		var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+		let h,m,s;
+		if(hours < 10){
+			h = "0"+hours;
+		} else {
+			h = hours;
+		}
+		if(minutes < 10){
+			m = "0"+minutes;
+		} else {
+			m = minutes;
+		}
+		if(seconds < 10){
+			s = "0"+seconds;
+		} else {
+			s = seconds;
+		}
+		document.getElementById("timer").innerHTML = h+":"+m+":"+s;
+		if(time_left <= 0){
+			clearInterval(x);
+			document.getElementById("timer").innerHTML = "Your session has ended!";
+			alert("Your session has ended!");
+		}
+	},1000);
+	return x;
+}
