@@ -30,6 +30,8 @@
 		</form>
 		<p id="timer"></p>
 		<script>
+			let session;
+			let interval;
 			document.getElementById('root').onload = function(){onOpen()};
 			
 			function onOpen(){
@@ -58,41 +60,47 @@
 
 			async function getSession() { 
 				let result = await browser.storage.local.get("session_length");
-				return result;
+				session = result.session_length;
+				console.log(`getSession: ${session}`);
+				return session;
 			}
 
 			async function getInterval() {
 				let result = await browser.storage.local.get("interval_length");
-				return result;
-			}
-
-			function onGot(item) {
-				console.log(item);
-			}
-
-			function onError(error) {
-				console.log(`Error: ${error}`);
-			}
-
-			function runSession() {
-				let interval = getInterval();
-				let session = getSession();
-				console.log(`Session: ${session}`);
+				interval = result.interval_length;
 				console.log(`Interval: ${interval}`);
-				var x = setInterval(function() {
-					end_time = new Date().getTime()+(session*3600000);
-					current_time = new Date().getTime();
-					var time_left = end_time - current_time;
-					var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-					var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
-					var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+				return interval;
+			}
+
+			async function runSession() {
+				//first we get the session
+				getSession()
+				.then((session) => {
+					//then we use session to start overhead timer
+					let promise = new Promise( (resolve, reject) => {
+						console.log('Starting timer...');
+						let s=session;
+						console.log(`Session Length: ${session}`);
+						var x = setInterval(() => {
+							var end_time = new Date().getTime()+(s*3600000);
+							var current_time = new Date().getTime();
+							var time_left = end_time - current_time;
+							console.log(`Time Left: ${time_left}`);
+							var hours = Math.floor((time_left % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+							var minutes = Math.floor((time_left % (1000 * 60 * 60)) / (1000 * 60));
+							var seconds = Math.floor((time_left % (1000 * 60)) / 1000);
+							
+							document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
+							if(time_left < 0){
+								clearInterval();
+								document.getElementById("timer").innerHTML = "Your session has ended!";
+								alert("Your session has ended!");
+							}
+						},1000);
+					});
+					promise.then(() => console.log('resolved'));
 					
-					document.getElementById("timer").innerHTML = hours+":"+minutes+":"+seconds;
-					if(time_left < 0){
-						clearInterval();
-						document.getElementById("timer").innerHTML = "Your session has ended!";
-					}
-				},1000);
+				});
 			}
 		</script>
 	</body>

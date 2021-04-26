@@ -40,7 +40,6 @@ function runSession() {
 		setTimeout(breakTime, (interval*60000));
 		setTimeout(workTime, 300000);
 	}*/
-}
 
 function breakTime() {
 	alert("It is time for a break! Step away from your computer for 5 minutes...");
